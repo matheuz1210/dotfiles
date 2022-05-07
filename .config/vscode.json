@@ -1,0 +1,23 @@
+{
+    "workbench.colorTheme": "Dracula",
+    "editor.fontFamily": "Iosevka",
+    "rust-analyzer.cargo.allFeatures": true,
+    "rust-analyzer.checkOnSave.command": "clippy",
+    "editor.formatOnSave": true,
+    "editor.fontLigatures": true,
+    "python.formatting.provider": "black",
+    "files.trimTrailingWhitespace": true,
+    "python.pythonPath": "/bin/python",
+    "terminal.integrated.env.linux": {
+        "EDITOR": "code -wr",
+    },
+    "terminal.integrated.enableBell": true,
+    "terminal.integrated.commandsToSkipShell": [
+        "-workbench.action.quickOpen"
+    ],
+    "files.maxMemoryForLargeFilesMB": 2048,
+    "terminal.integrated.fontSize": 12,
+    "workbench.activityBar.visible": false,
+    "window.menuBarVisibility": "toggle",
+    "terminal.external.linuxExec": "konsole",
+}
