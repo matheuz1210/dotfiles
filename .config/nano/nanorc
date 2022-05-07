@@ -1,0 +1,15 @@
+include "/usr/share/nano/*.nanorc"
+include "/usr/share/nano-syntax-highlighting/*.nanorc"
+
+# show line bar at the bottom, instead of the bar at the top
+set minibar
+
+# always show line cursor position, and linenumbers
+set constantshow
+set linenumbers
+
+# tabs to spaces, trim whitespace
+set tabstospaces
+set tabsize 4
+set trimblanks
+set autoindent
