@@ -1,0 +1,20 @@
+[user]
+	email = matheuz1210@gmail.com
+	name = matheuz1210
+[help]
+	autoCorrect = prompt
+[pull]
+	rebase = false
+[commit]
+	verbose = true
+[init]
+	defaultBranch = main
+	templatedir = ~/.config/git/template
+
+
+[url "ssh://aur@aur.archlinux.org/"]
+	insteadOf = aur:
+[url "git@github.com:"]
+	insteadOf = gh:
+[url "git@gitlab.com:"]
+	insteadOf = gl:

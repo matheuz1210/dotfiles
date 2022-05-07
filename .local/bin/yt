@@ -1,0 +1,13 @@
+#!/bin/sh
+case $1 in
+	x) opt="-x";;
+	o) opt="--all-subs --embed-subs";;
+	live) shift; opt="--live-from-start -f bestvideo[height=$1]+bestaudio";;
+	*) opt="--all-subs --embed-subs -f bestvideo[height=$1]+bestaudio";;
+esac
+shift
+yt-dlp --no-mtime\
+	--add-metadata\
+	-N 4\
+	-io '%(title)s.%(ext)s' $opt $@
+#--external-downloader 'aria2c' --external-downloader-args '-c -j 3 -x 3 -s 3 -k 1M'
