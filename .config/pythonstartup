@@ -1,0 +1,36 @@
+#!/usr/bin/env python
+# like mostly taken from github.com/grawity/dotfiles
+import os, sys
+
+
+def _init_():
+    import atexit
+    import readline
+    import rlcompleter
+
+    if hasattr(sys, "__interactivehook__"):
+        # As of v3.4, sys.__interactivehook__ in site.py already performs the
+        # same except with ~/.python_history as the path, and only if history
+        # is still empty after our read_history_file call.
+        #
+        # This means that the 1st startup will create *both* histfiles on exit,
+        # although the 2nd startup will use ours. Remove the site.py hook to
+        # avoid this.
+        del sys.__interactivehook__
+
+    readline.read_init_file()
+    readline.parse_and_bind("tab: complete")
+    hist_file = os.path.expanduser("~/.cache/python.history")
+    if os.path.exists(hist_file):
+        readline.read_history_file(hist_file)
+    atexit.register(lambda: readline.write_history_file(hist_file))
+
+    class ps1:
+        def __str__(_):
+            return f"\033[;1;30m {os.getcwd()} >\033[m "
+
+    sys.ps1 = ps1()
+
+
+_init_()
+del _init_
