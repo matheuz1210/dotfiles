@@ -6,8 +6,8 @@
     "editor.formatOnSave": true,
     "editor.fontLigatures": true,
     "python.formatting.provider": "black",
+    "python.analysis.completeFunctionParens": true,
     "files.trimTrailingWhitespace": true,
-    "python.pythonPath": "/bin/python",
     "terminal.integrated.env.linux": {
         "EDITOR": "code -wr",
     },
@@ -17,7 +17,10 @@
     ],
     "files.maxMemoryForLargeFilesMB": 2048,
     "terminal.integrated.fontSize": 12,
-    "workbench.activityBar.visible": false,
+    "workbench.activityBar.visible": true,
     "window.menuBarVisibility": "toggle",
     "terminal.external.linuxExec": "konsole",
+    "cSpell.allowCompoundWords": true,
+    "workbench.sideBar.location": "right",
+    "files.eol": "\n",
 }
