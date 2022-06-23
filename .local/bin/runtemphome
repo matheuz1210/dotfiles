@@ -1,0 +1,28 @@
+#!/bin/zsh
+# run program with a temporary home directory
+
+
+tmpdir="$(mktemp -d)"
+echo "tmpdir=${tmpdir}"
+
+export HOME="$tmpdir"\
+       XDG_CONFIG_HOME="$tmpdir/.config"\
+       XDG_CACHE_HOME="$tmpdir/.cache"\
+       XDG_DATA_HOME="$tmpdir/.local/share"\
+       XDG_STATE_HOME="$tmpdir/.local/state"
+
+$@
+ret=$?
+
+case "$DELETETEMPHOME" in
+    "1"|"true") rm -vrf "$tmpdir";;
+    "0"|"false") : ;;
+    "")
+    echo "would you like to delete tmpdir? (Y/n)"
+    case $(read -rek1) in
+        "y"|"Y"|"") rm -vrf "$tmpdir";;
+        "n"|"N") : ;;
+    esac
+esac
+
+exit $ret
