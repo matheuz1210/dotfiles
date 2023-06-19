@@ -1,12 +1,23 @@
 [user]
 	email = matheuz1210@gmail.com
-	name = matheuz1210
+	name = mat1210
+	signingKey = /home/mat/.ssh/id_ed25519.pub
 [help]
 	autoCorrect = prompt
 [pull]
 	rebase = false
+[log]
+	showSignature = true
 [commit]
 	verbose = true
+	gpgsign = true
+[tag]
+	gpgsign = true
+[gpg]
+    format = ssh
+[gpg "ssh"]
+	allowedSignersFile = ~/.config/git/allowedSigners
+
 [init]
 	defaultBranch = main
 	templatedir = ~/.config/git/template
