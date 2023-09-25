@@ -1,0 +1,62 @@
+#!/bin/sh -e
+[ -z "$speed" ] && speed=9
+[ -z "$bspeed" ] && bspeed=11
+
+TMPDIR="${TMPDIR:-/tmp}"/jxlify-"$USER"
+savedfile="$TMPDIR/saved"
+[ ! -d "$TMPDIR" ] && mkdir -m a=,u=rwx "$TMPDIR"
+
+log(){
+    printf "[%s] %s\n" "$(date -Iseconds)" "$*"| tee -a "$TMPDIR"/log
+}
+fsize() {
+    stat -c %s "$1"
+}
+savedtotal() {
+  log "so far, saved $tsaved bytes!"
+  printf "%s" "$tsaved" >"$savedfile"
+}
+if [ -f "$savedfile" ]
+then
+    tsaved=$(cat "$savedfile")
+else
+    tsaved=0
+fi
+log started jxlify!
+for input in "$@"; do
+    if [ "$(file -b --mime-type "$input")" = "image/jxl" ]
+    then
+        log "$input already jxl!"
+        continue
+    fi
+
+    out="$TMPDIR"/"${input##*/}".part.jxl
+    log encoding "$input"
+    if ! cjxl -e "$speed" --brotli_effort="$bspeed" --container 1 $JXLIFY_ARGS "$input" "$out"
+    then
+        log failed to encode "$input"
+        continue
+    fi
+
+    isize=$(fsize "$input")
+    outsize=$(fsize "$out")
+    saved=$((isize - outsize))
+    log "${input##*/}" size "$isize"
+    log "${out##*/}" size "$outsize"
+    if [ "$saved" -lt 0 ]
+    then
+    	log "jxl file bigger than original! ignoring..."
+    	continue
+	fi
+    tsaved=$((tsaved + saved))
+    log saved "$saved" bytes!
+    savedtotal
+
+	newtmp="$input.jxl"
+
+    touch -r "$input" "$out" && \
+    mv -v "$out" "$newtmp" && \
+    rm -v "$input" && \
+    mv -v "$newtmp" "${input%.*}.jxl"
+done
+
