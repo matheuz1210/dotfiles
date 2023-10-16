@@ -1,0 +1,46 @@
+#!/bin/zsh -e
+# mkrofs: make an optionally encrypted read-only file system image
+# usage: mkrofs SOURCE-DIRECTORY OUTPUT FILESYSTEM
+#
+# supported filesystems: erofs squashfs iso udf
+# filesystems are encrypted using cryptsetup
+#
+# vars:
+#	CRYPT: set if filesystem should be encrypted
+#	RATIONALIZE: when udf/iso, set if permissions should rationalized (see mkisofs(1))
+#	ARGS: set custom args for mkfs.erofs, mksquashfs, or mkisofs
+#	LABEL: set filesystem label. not suported by squashfs
+[[ $# <= 3 ]] && { echo "usage: mkrofs SOURCE-DIRECTORY OUTPUT FILESYSTEM"; exit 1 }
+readonly \
+	out=$2 \
+	src=$1 \
+	fs=$3
+
+[ -e $out ] && TRAPZERR() { rm $out }
+if [ $CRYPT ]; then
+	readonly luksheader=20MiB luksiter=$((20000 + $(date +%S%k)))
+	[ $UID != 0 ] && { echo '$CRYPT requires root, lol'; exit 1 }
+	umask 077
+fi
+
+case $fs in
+	erofs)
+		mkfs.erofs -L $LABEL ${=ARGS} $out $src;;
+
+	squashfs)
+		mksquashfs $out $dst ${=ARGS};;
+
+	udf|iso)
+		if [[ $RATIONALIZE ]] { args="-udf -r" } else { args="-UDF -R" }
+		mkisofs ${=ARGS} ${=args} -V $LABEL -iso-level 3 -o $out $src;;
+
+	*) echo "$fs not a valid fs!"; exit 1;;
+esac
+
+if [ $CRYPT ]; then
+	truncate -cs +$luksheader $out
+	cryptsetup reencrypt \
+		--encrypt --reduce-device-size $luksheader \
+		--iter-time $luksiter --hash sha512 \
+		--label $LABEL $out
+fi
