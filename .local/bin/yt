@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -e
 readonly SUBS="--embed-subs --sub-langs all,-live_chat"
 case $1 in
 	x) opt="-x";;

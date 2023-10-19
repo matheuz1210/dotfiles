@@ -8,8 +8,7 @@ set minibar
 set constantshow
 set linenumbers
 
-# tabs to spaces, trim whitespace
-set tabstospaces
+# trim whitespace
 set tabsize 4
 set trimblanks
 set autoindent
