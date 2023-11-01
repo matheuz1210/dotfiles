@@ -29,7 +29,7 @@ case $fs in
 		mkfs.erofs -L $LABEL ${=ARGS} $out $src;;
 
 	squashfs)
-		mksquashfs $out $dst ${=ARGS};;
+		mksquashfs $src $out ${=ARGS};;
 
 	udf|iso)
 		if [[ $RATIONALIZE ]] { args="-udf -r" } else { args="-UDF -R" }
