@@ -2,7 +2,7 @@
 AntiAliasFonts=true
 BoldIntense=true
 ColorScheme=Gruvbox Material Hard Dark
-Font=Iosevka Fixed,11,-1,5,50,0,0,0,0,0
+Font=JetBrains Mono,11,-1,5,50,0,0,0,0,0
 
 [General]
 Command=/bin/zsh
