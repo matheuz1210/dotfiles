@@ -1,0 +1,69 @@
+#!/bin/zsh -e
+# vidresize: makes a video smaller, hopefully
+#
+# usage: $VARS vidresize input output video_bitrate audio_bitrate
+#
+# vars:
+#	INPUTARGS: ffmpeg options set before input
+#	OUTPUTARGS: ffmpeg options set after input
+#	VENC: set video encoder, by default uses h264_vaapi
+#	AENC: set audio encoder, by default libopus
+#	SCALE: scales video, for example "SCALE=1280x720" would scale it into 720p
+#	NOAUDIO: disables audio
+#
+# tip:
+#	to get the bitrate for a specific size, you can use GNU units
+#	for example, to get bitrate needed to get a 10 minute video to 25MiB file, run
+#	`units 25MiB/10min kbit/s`
+#
+# TODO: make this better
+die() { printf "%s\n" $1; exit 1 }
+[[ $# < 4 ]] && die "usage: \$VARS ${0:t} input output video_bitrate audio_bitrate"
+
+INPUT=$1
+OUTPUT=$2
+VBITRATE=$3
+ABITRATE=$4
+
+setopt rematchpcre
+[[ ! $VBITRATE =~ '^\d+k$' ]] && die "only bitrates suffixed in k are supported (for example, '100k', not '10M' or '100000' or '10KiB'"
+
+: ${VENC:=h264_vaapi}
+: ${AENC:=libopus}
+unset USEVAAPI
+if [[ $VENC == *vaapi ]] { USEVAAPI=1 }
+
+args=()
+
+if (( USEVAAPI )) { args+=( -hwaccel vaapi -hwaccel_device /dev/dri/renderD128 -hwaccel_output_format vaapi ) }
+
+args+=(
+        ${=INPUTARGS} -i $INPUT
+        -c:v $VENC -b:v $VBITRATE
+		-c:a $AENC -b:a $ABITRATE
+		-c:s copy # copy subtitles
+)
+
+# set max bitrate when using libsvtav1
+if [[ $VENC == libsvtav1 ]] {
+	_mbr=${VBITRATE[1,-2]}
+	_tbr=$((_mbr -1 )) # has to be smaller than mbr otherwise it complains
+	args+=( -svtav1-params tbr=${_tbr}:mbr=${_mbr}:overshoot-pct=0:mbr-overshoot-pct=0 )
+}
+
+if [[ $SCALE ]] {
+	[[ ! $SCALE =~ '^\d+x\d+$' ]] && die "\$SCALE set as $SCALE, not in '1280x720' format"
+	SCALE=( ${(s:x:)SCALE} ) # split it on x
+	args+=( -vf 'scale'${USEVAAPI:+_vaapi}"=w=${SCALE[1]}:h=${SCALE[2]}" )
+}
+if (( NOAUDIO )) { args+=( -map 0 -map -0:a ) }
+
+args+=(
+        ${=OUTPUTARGS} $OUTPUT
+)
+
+if (( DEBUG )) {
+	showargs $args
+	exit 1
+}
+ffmpeg -hide_banner $args
