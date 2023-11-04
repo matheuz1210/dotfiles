@@ -1,5 +1,5 @@
 source ~/.config/user-dirs.dirs
-path+=~/.local/bin
+path=( ~/.local/bin $path )
 export \
 	XDG_CONFIG_HOME XDG_CACHE_HOME XDG_DATA_HOME \
 	ANDROID_USER_HOME=$HOME/.android ANDROID_HOME=$HOME/.android/sdk \
