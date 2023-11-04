@@ -1,5 +1,5 @@
 # some parts of this file are adapted from https://github.com/ohmyzsh/ohmyzsh
-setopt noclobber appendcreate interactivecomments
+setopt noclobber appendcreate interactivecomments globstarshort
 
 # directory settings
 setopt autocd autopushd pushdignoredups pushdminus
