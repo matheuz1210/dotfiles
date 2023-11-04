@@ -82,9 +82,11 @@ prompt() {
   exit=$?
   if [[ $exit != 0 ]] { color=red } else { color=yellow }
 
-  [[ $exit != 0 ]] && { echo "$BG[black]$FG[red] ⚠️$FX[reset] command exited with error code %?!" }
-  echo "$FX[reset]$FG[$color]╭─────$FX[reset] $FX[bold]$FG[brightblue]%n$FX[reset] at $FX[bold]$FG[brightyellow]%~$FX[reset]"
-  echo "%{$FG[$color]%}╰─ %#%{$FX[reset]%} " # color vars encased in %{...%} to prevent the cursor position being wrong
+  # color vars encased in %{...%} to prevent the cursor position being wrong
+  echo -n "%{$FX[reset]%}"
+  [[ $exit != 0 ]] && { echo "%{$BG[black]$FG[red]%} ⚠️%{$FX[reset]%} command exited with error code %?!" }
+  echo "%{$FG[$color]%}╭───── %{$FX[reset]$FX[bold]$FG[brightblue]%}%n%{$FX[reset]%} at %{$FX[bold]$FG[brightyellow]%}%~%{$FX[reset]%}"
+  echo "%{$FG[$color]%}╰─ %#%{$FX[reset]%} "
 }
 PS1='$(prompt)'
 
