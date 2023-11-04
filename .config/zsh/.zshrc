@@ -18,7 +18,7 @@ alias \
 	cls=clear \
 	_="doas " \
 	fmp="ffmpeg -hide_banner" fpl="ffplay -hide_banner" fpr="ffprobe -hide_banner" \
-	d="dirs -v" -="cd -"
+	d="dirs -v" -="cd -" history="builtin fc -l 1"
 
 alias \
 	rm="rm -Iv" \
@@ -26,6 +26,7 @@ alias \
 	cp="cp -av" mv="mv -v" ln="ln -v" \
 	chmod="chmod -v" chown="chown -v" \
 	miniserve="miniserve -v" \
+	rsync="rsync -hhhaP" \
 	zst="zstdmt --rm --ultra -22 --long -v"
 
 alias \
@@ -40,10 +41,13 @@ alias \
 
 function pac {
 	case $1 in
-		-Q*|-Ss*|-Si*) pacman $@;;
+		-Q*|-S[si]*|-F^(y)) pacman $@;;
 		*) doas pacman $@;;
 	esac
 }
+
+pat(){ bat -p $@ }
+READNULLCMD=pat
 
 ## Colors
 typeset -AHg FX FG BG
