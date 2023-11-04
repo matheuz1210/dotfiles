@@ -11,4 +11,4 @@ export \
 	PYTHONSTARTUP=$XDG_CONFIG_HOME/pythonstartup \
 	WINEPREFIX=~/.local/wine \
 	LESSHISTFILE=- \
-	EDITOR=nano PAGER="bat -p"
+	EDITOR=nano PAGER="bat -p" MANGOHUD=1
