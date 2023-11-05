@@ -125,6 +125,7 @@ if (( ${+terminfo[smkx]} )) && (( ${+terminfo[rmkx]} )) {
   zle -N zle-line-finish
 }
 
+WORDCHARS=${WORDCHARS/\/}
 ## Syntax Highlighting
 ZSH_HIGHLIGHT_HIGHLIGHTERS=(main cursor)
 
