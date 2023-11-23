@@ -1,0 +1,42 @@
+#!/bin/zsh -em
+# scrcpy-mic: use android microphone on desktop
+# this is kinda janky though and doesn't kill scrcpy properly, so you'll have to call `pkill scrcpy`
+cleanup() {
+	[ ! -z $sinkID ] && pactl unload-module $sinkID
+	[ -z $scrcpyPID ] && kill $scrcpyPID
+	exit
+}
+TRAPZERR() { cleanup }
+
+# create virtual microphone "androidmic" if it doesn't exist already
+if [[ ! $(pactl list sources short | grep androidmic) ]] {
+	sinkID=$(pactl load-module module-null-sink sink_name=androidmic media.class=Audio/Source/Virtual )
+}
+
+scrcpy --audio-source=mic $@ &
+export scrcpyPID=$!
+sleep 5 # wait for scrcpy to connect
+
+# first ID is the port ID, rest are the link IDs
+IDs=( $(pw-dump | jq -r '
+		(.[] |
+			select(.type == "PipeWire:Interface:Node") |
+			select(.info.props."application.process.id" == ($ENV.scrcpyPID| tonumber)) |
+		.id ) as $nodeID |
+		[ .[] |
+			select(.type == "PipeWire:Interface:Link")|
+			select(.info."output-node-id" == $nodeID)
+		] |
+			[.[0].info.props."link.output.port", .[].id ] | join(" ")
+	')
+)
+
+portID=$IDs[1]
+for linkID in $IDs[2,-1]
+	pw-link -d $linkID
+
+pw-link $portID androidmic:input_FL
+pw-link $portID androidmic:input_FR
+
+fg
+cleanup
