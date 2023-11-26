@@ -1,0 +1,107 @@
+#!/bin/zsh -e
+unset HAS_Z{ATTR,STAT} SUMS
+zmodload zsh/attr &>/dev/null && HAS_ZATTR=1
+zmodload zsh/stat &>/dev/null && HAS_ZSTAT=1
+PREFIX="user.checksum"
+
+err() {
+    echo $1
+    return 1
+}
+
+mtime() {
+    if (( HAS_ZSTAT )) {
+        local arr
+        zstat -H arr $1 && echo $arr[mtime]
+    } else {
+        stat -c %Y $1
+    }
+}
+
+setxattr() {
+    local file=$1 attr=$2 value=$3
+    if (( HAS_ZATTR )) {
+        zsetattr $file $PREFIX.$attr $value
+    } else {
+        setfattr -n $PREFIX.$attr -v $value $file
+    }
+}
+
+getxattr() {
+    local file=$1 attr=$2
+    if (( HAS_ZATTR )) {
+        zgetattr $file $PREFIX.$attr
+    } else {
+        getfattr --only-values -n $PREFIX.$attr $file
+    }
+}
+
+sha256() {
+    sha256sum $1 | cut -d" " -f1
+}
+
+blake3() {
+    b3sum --no-names $1
+}
+SUMS=(blake3 sha256) # TODO: check if b3sum is avaliable
+
+get(){
+    local file=$1 arr=$2 _sum
+    local -A _xattrs
+
+    _xattrs[mtime]="$(getxattr $file mtime 2>/dev/null)" || err "mtime attr not found!"
+    for sum ( $SUMS ) {
+        _sum="$(getxattr $file $sum 2>/dev/null )" || continue
+        _xattrs[$sum]=$_sum
+    }
+
+    set -A $arr ${(kv)_xattrs}
+}
+
+check() {
+    typeset -A xattrs
+    get $1 xattrs
+
+    currentmtime=$(mtime $1)
+    summtime=$xattrs[mtime]
+    if [[ $currentmtime != $summtime ]] {
+        (( SKIPMTIME )) \
+            || err "file has been modified since checksummed! (checksum mtime $summtime, currentmtime $currentmtime)"$'\n'"run with SKIPMTIME=1 to ignore"
+    }
+
+    for sum ($SUMS) {
+        if (( $+xattrs[$sum] )) {
+            old=$xattrs[$sum]
+            new=$($sum $1)
+            [[ $old != $new ]] && err "checksum mismatch! expected $old, got $new"
+            echo "$1 $sum matches!"
+            return 0
+        }
+    }
+    err "$1 does not have any availiable checksums! tried $SUMS"
+}
+
+_set() {
+    local file=$1
+    local -A _xattrs
+
+    _xattrs[mtime]=$(mtime $file)
+    for sum ( $SUMS ) {
+        _xattrs[$sum]=$($sum $file)
+        [[ $_xattrs[mtime] != $(mtime $file) ]] && err "file has been modified since checksumming started!"
+    }
+
+    for attr value ( ${(kv)_xattrs} ) {
+        setxattr $1 $attr $value
+    }
+}
+
+ARG=$1
+shift
+for file ( $@ ) {
+    case $ARG in
+        check) check $file;;
+        set) _set $file;;
+        *) err "${0:t} check|set"
+    esac
+}
