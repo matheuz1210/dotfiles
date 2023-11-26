@@ -1,5 +1,5 @@
 # some parts of this file are adapted from https://github.com/ohmyzsh/ohmyzsh
-setopt noclobber appendcreate interactivecomments globstarshort
+setopt noclobber appendcreate interactivecomments globstarshort extendedglob
 
 # directory settings
 setopt autocd autopushd pushdignoredups pushdminus
@@ -26,7 +26,7 @@ alias \
 	cp="cp -av" mv="mv -v" ln="ln -v" \
 	chmod="chmod -v" chown="chown -v" \
 	miniserve="miniserve -v" \
-	rsync="rsync -hhhaP" \
+	rsync="rsync -hhhHXPAa" \
 	zst="zstdmt --rm --ultra -22 --long -v"
 
 alias \
@@ -38,6 +38,20 @@ alias \
 	ls="eza -G" \
 	l="eza -balG" \
 	ll="eza -bal"
+
+function tar {
+  if command -v bsdtar &>/dev/null
+    then TAR==bsdtar
+    else TAR==tar
+  fi
+
+  if [[ $1 == -* ]] {
+    $TAR -p $@
+  } else {
+    $TAR p$@
+  }
+}
+functions -c tar bsdtar
 
 function pac {
 	case $1 in
