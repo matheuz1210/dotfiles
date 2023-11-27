@@ -1,4 +1,5 @@
 #!/bin/zsh -e
+setopt pipefail
 unset HAS_Z{ATTR,STAT} SUMS
 zmodload zsh/attr &>/dev/null && HAS_ZATTR=1
 zmodload zsh/stat &>/dev/null && HAS_ZSTAT=1
