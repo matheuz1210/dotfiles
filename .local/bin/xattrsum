@@ -11,8 +11,7 @@ err() {
 
 mtime() {
     if (( HAS_ZSTAT )) {
-        local arr
-        zstat -H arr $1 && echo $arr[mtime]
+        zstat +mtime $1
     } else {
         stat -c %Y $1
     }
