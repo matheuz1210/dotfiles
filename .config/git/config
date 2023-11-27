@@ -6,15 +6,13 @@
 	autoCorrect = prompt
 [pull]
 	rebase = false
-[log]
-	showSignature = true
 [commit]
 	verbose = true
-	gpgsign = true
-[tag]
-	gpgsign = true
-[gpg]
-    format = ssh
+#	gpgsign = true
+#[tag]
+#	gpgsign = true
+#[gpg]
+#    format = ssh
 [gpg "ssh"]
 	allowedSignersFile = ~/.config/git/allowedSigners
 
@@ -23,9 +21,17 @@
 	templatedir = ~/.config/git/template
 
 
-[url "ssh://aur@aur.archlinux.org/"]
+[url "https://aur.archlinux.org/"]
 	insteadOf = aur:
-[url "git@github.com:"]
+[url "ssh://aur@aur.archlinux.org/"]
+	pushInsteadOf = aur:
+
+[url "https://github.com/"]
 	insteadOf = gh:
-[url "git@gitlab.com:"]
+[url "git@github.com:"]
+	pushInsteadOf = gh:
+
+[url "https://gitlab.com/"]
 	insteadOf = gl:
+[url "git@gitlab.com:"]
+	pushInsteadOf = gl:
