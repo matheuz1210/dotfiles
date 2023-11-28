@@ -40,7 +40,8 @@ alias \
 	ll="eza -bal"
 
 function tar {
-  if command -v bsdtar &>/dev/null
+  local TAR
+  if (( $+commands[bsdtar] ))
     then TAR==bsdtar
     else TAR==tar
   fi
