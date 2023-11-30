@@ -64,8 +64,9 @@ function pac {
 pat(){ bat -p $@ }
 READNULLCMD=pat
 
-source $ZDOTDIR/utils/color.zsh
-source $ZDOTDIR/utils/math.zsh
+for util ( stat math color ) {
+	source $ZDOTDIR/utils/$util.zsh
+}
 
 ## Prompts
 REPORTTIME=5
