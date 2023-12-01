@@ -1,0 +1,56 @@
+#!/bin/zsh -e
+# WIP
+source $ZDOTDIR/utils/color.zsh
+
+tagname="purl"
+typeset -Ag tags
+
+resolve() {
+    local first=$1 second=$2 tag=$3
+    echo "\
+  $(printcolor magenta $first)
+  and $(printcolor cyan $second)
+  have tag $(printcolor yellow $tagname) set to $(printcolor red $tag)!
+"
+    while true;do
+        echo "\
+ what to do?
+  1) delete first
+  2) delete second
+  3) do nothing
+"
+
+        read -k1 opt
+        case $opt in
+            1) rm -v $first;;
+            2) rm -v $second;;
+            3) :;;
+            *) continue;;
+        esac
+        break
+    done
+}
+addhash() {
+    for file ( $@ ) {
+        # get tag $filename from $file
+        tag="$(exiftool -if \$$tagname -s3 -$tagname $file)" || continue
+
+        # if tag already on $tags, show prompt, else add it to $tags
+        if (( $+tags[$tag] )) {
+            resolve $tags[$tag] $file $tag
+        }
+        tags[$tag]=$file
+
+    }
+}
+
+for arg ( $@ ) {
+    if [[ -d $arg ]] {
+        addhash $arg/*
+    } elif [[ -e $arg ]] {
+        addhash $arg
+    } else {
+        echo "$arg not found!"
+        exit 1
+    }
+}
