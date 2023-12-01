@@ -1,15 +1,27 @@
 #!/bin/sh -e
+
+opts=""
+if [ "$1" = "live" ]
+then
+	opts="$opts --live-from-start"
+	shift
+fi
 case $1 in
-	x) opt="-x --remux-video mka";;
-	o) opt="";;
-	live) shift; opt="--live-from-start -f bestvideo[height=$1]+bestaudio";;
-	*) opt="-f bestvideo[height=$1]+bestaudio";;
+	# audio only
+	x) opts="$opts -x --remux-video mka";;
+
+	# default video format
+	o) :;;
+
+	# specify video height
+	*) opts="$opts -f bestvideo[height=$1]+bestaudio";;
 esac
 shift
-yt-dlp --no-mtime\
-	--add-metadata\
-	-N "$(nproc)"\
-	--embed-chapters\
+
+yt-dlp \
+	--no-mtime \
+	-N "$(nproc)" \
+	--add-metadata --embed-chapters \
 	--embed-subs --sub-langs all,-live_chat \
-	-io '%(title)s.%(ext)s' $opt $@
+	-io '%(title)s.%(ext)s' $opts $@
 #--downloader 'aria2c' --downloader-args '-c -j 3 -x 3 -s 3 -k 1M'
