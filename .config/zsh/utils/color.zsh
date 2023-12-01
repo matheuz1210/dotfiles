@@ -24,3 +24,7 @@ for n color (
     FG[$color]="[38;5;${n}m"
     BG[$color]="[48;5;${n}m"
 }
+
+printcolor() {
+  echo -n "$FX[reset]$FG[$1]$2$FX[reset]"
+}
