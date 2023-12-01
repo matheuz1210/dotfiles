@@ -1,15 +1,15 @@
 #!/bin/sh -e
-readonly SUBS="--embed-subs --sub-langs all,-live_chat"
 case $1 in
-	x) opt="-x";;
-	o) opt="$SUBS";;
+	x) opt="-x --remux-video mka";;
+	o) opt="";;
 	live) shift; opt="--live-from-start -f bestvideo[height=$1]+bestaudio";;
-	*) opt="$SUBS -f bestvideo[height=$1]+bestaudio";;
+	*) opt="-f bestvideo[height=$1]+bestaudio";;
 esac
 shift
 yt-dlp --no-mtime\
 	--add-metadata\
 	-N "$(nproc)"\
 	--embed-chapters\
+	--embed-subs --sub-langs all,-live_chat \
 	-io '%(title)s.%(ext)s' $opt $@
 #--downloader 'aria2c' --downloader-args '-c -j 3 -x 3 -s 3 -k 1M'
