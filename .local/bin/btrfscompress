@@ -1,0 +1,28 @@
+#!/bin/zsh -e
+zmodload zsh/attr
+autoload zargs
+setopt globdots nullglob
+COMPALG=${COMPALG:-zstd}
+
+filelist=()
+getfolderlist() {
+    for folder ( $@ ) {
+        folder=${folder:A}
+        [ ! -d $folder ] && continue
+
+        # return if folder has compression property and it's not $COMPALG
+        if zgetattr $folder btrfs.compression alg 2>/dev/null
+        then if [[ $alg != $COMPALG ]] { continue }
+        fi
+
+        btrfs property set $folder compression $COMPALG
+        filelist+=( $folder/*(.) )
+
+        getfolderlist $folder/*(/)
+    }
+}
+
+getfolderlist "$@"
+if (( DEBUG )) { showargs $filelist; exit 1 }
+zargs -- $filelist -- btrfs filesystem defrag -c$COMPALG -v
+
