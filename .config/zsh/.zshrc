@@ -85,6 +85,14 @@ prompt() {
 }
 PS1='$(prompt)'
 
+# set tmux pane title to last command
+if (( $+TMUX )) {
+	typeset -ga preexec_functions precmd_functions
+	_tmux_clear_pane() { printf '\033]2;zsh\007' }
+	_tmux_rename_pane() { printf '\033]2;%s\007' $2 }
+	preexec_functions+=_tmux_rename_pane
+	precmd_functions+=_tmux_clear_pane
+}
 
 ## Completion
 setopt globdots
