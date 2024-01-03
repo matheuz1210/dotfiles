@@ -20,6 +20,8 @@
 #	`units 25MiB/10min kbit/s`
 #
 # TODO: make this better
+setopt rematchpcre
+
 die() { printf "%s\n" $1; exit 1 }
 [[ $# < 3 ]] && die "usage: \$VARS ${0:t} input output video_bitrate [audio_bitrate]"
 
@@ -49,7 +51,7 @@ if (( USEVAAPI )) { args+=( -b:v $VBITRATE ) }
 
 if [[ $SCALE ]] {
 	setopt rematchpcre
-	[[ ! $SCALE =~ '^\d+x\d+$' ]] && die "\$SCALE set as $SCALE, not in '1280x720' format"
+	[[ ! $SCALE =~ '^-?\d+x-?\d+$' ]] && die '$SCALE not a scale!'
 	SCALE=( ${(s:x:)SCALE} ) # split it on x
 	args+=( -vf 'scale'${USEVAAPI:+_vaapi}"=w=${SCALE[1]}:h=${SCALE[2]}" )
 }
