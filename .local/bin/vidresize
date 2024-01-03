@@ -1,11 +1,12 @@
 #!/bin/zsh -e
 # vidresize: makes a video smaller, hopefully
 #
-# usage: $VARS vidresize input output video_bitrate audio_bitrate
+# usage: $VARS vidresize input output video_bitrate [audio_bitrate]
 #
 # vars:
 #	INPUTARGS: ffmpeg options set before input
 #	OUTPUTARGS: ffmpeg options set after input
+#
 #	VENC: set video encoder, by default uses h264_vaapi
 #		  this script has been tested to work with *_vaapi and libsvtav1,
 #		  other codecs may not work properly
@@ -20,12 +21,12 @@
 #
 # TODO: make this better
 die() { printf "%s\n" $1; exit 1 }
-[[ $# < 4 ]] && die "usage: \$VARS ${0:t} input output video_bitrate audio_bitrate"
+[[ $# < 3 ]] && die "usage: \$VARS ${0:t} input output video_bitrate [audio_bitrate]"
 
 INPUT=$1
 OUTPUT=$2
 VBITRATE=$3
-ABITRATE=$4
+ABITRATE=${4:-.}
 
 : ${VENC:=h264_vaapi}
 : ${AENC:=libopus}
@@ -62,4 +63,4 @@ if (( DEBUG )) {
 	showargs $args
 	exit 1
 }
-ffmpeg -hide_banner $args
+ffmpeg $args
