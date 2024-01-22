@@ -1,7 +1,11 @@
-source ~/.config/user-dirs.dirs
+XDG_CACHE_HOME="$HOME/.cache"
+XDG_DATA_HOME="$HOME/.local/share"
+XDG_STATE_HOME="$HOME/.local/state"
+XDG_CONFIG_HOME="$HOME/.config"
+
 path=( ~/.local/bin $path )
 export \
-	XDG_CONFIG_HOME XDG_CACHE_HOME XDG_DATA_HOME \
+	XDG_{CONFIG,CACHE,DATA,STATE}_HOME \
 	ANDROID_USER_HOME=$HOME/.android ANDROID_HOME=$HOME/.android/sdk \
 	GNUPGHOME=$XDG_CONFIG_HOME/gnupg \
 	DOTNET_CLI_HOME=$XDG_CACHE_HOME/dotnet NUGET_PACKAGES=$XDG_CACHE_HOME/nuget \
