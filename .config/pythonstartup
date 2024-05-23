@@ -27,7 +27,7 @@ def _init_():
 
     class ps1:
         def __str__(_):
-            return f"\033[;1;30m {os.getcwd()} >\033[m "
+            return f"\001\033[;1;30m\002 {os.getcwd()} >\001\033[m\002 "
 
     sys.ps1 = ps1()
 
