@@ -115,6 +115,7 @@ bindkey '^[z'            undo                  # Alt-z
 autoload -U edit-command-line
 zle -N edit-command-line
 bindkey '^[e'  edit-command-line              # Alt-e
+source ${PREFIX:-/usr}/share/fzf/key-bindings.zsh
 
 # you need this for $terminfo to work for some reason
 if (( ${+terminfo[smkx]} )) && (( ${+terminfo[rmkx]} )) {
