@@ -17,7 +17,7 @@ nohist() {
 
 ## Aliases
 alias \
-	dotfiles="git --git-dir ~/.config/dotfiles" \
+	dotfiles="git --git-dir ~/.config/dotfiles --work-tree ~" \
 	snp=snapper \
 	cls=clear \
 	_="doas " \
@@ -28,7 +28,7 @@ alias \
 	rm="rm -Iv" \
 	md="mkdir -p" rd=rmdir \
 	cp="cp -av" mv="mv -v" ln="ln -v" \
-	chmod="chmod -v" chown="chown -v" \
+	chmod="chmod -c" chown="chown -c" \
 	miniserve="miniserve -v" \
 	rsync="rsync -hhhHXPAa" \
 	zst="zstdmt --rm --ultra -22 --long -v"
