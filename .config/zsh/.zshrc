@@ -8,8 +8,12 @@ eval "$(zoxide init zsh)"
 # history
 setopt extendedhistory appendhistory histignore{dups,space} sharehistory histverify
 HISTFILE=$XDG_CACHE_HOME/zsh_history
-HISTSIZE=50000
-SAVEHIST=10000
+HISTSIZE=500000
+SAVEHIST=100000
+
+nohist() {
+	HISTFILE=/dev/null
+}
 
 ## Aliases
 alias \
