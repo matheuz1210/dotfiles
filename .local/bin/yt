@@ -7,6 +7,9 @@ then
 	shift
 fi
 case $1 in
+    # subtitle only
+    subs) opts="$opts --skip-download --write-subs";;
+
 	# audio only
 	x) opts="$opts -x --remux-video mka";;
 
