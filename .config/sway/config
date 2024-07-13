@@ -1,0 +1,15 @@
+include /etc/sway/config
+
+set $term konsole
+set $browser floorp
+
+input type:keyboard {
+    xkb_layout "br"
+    xkb_numlock enabled
+}
+input type:touchpad tap enabled
+
+bindsym --no-warn $mod+Return exec $term
+bindsym $mod+F1 exec $browser
+
+include config.d/*
