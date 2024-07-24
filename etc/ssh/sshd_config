@@ -1,0 +1,27 @@
+# see sshd_config(5)
+Include /etc/ssh/sshd_config.d/*.conf
+
+PermitRootLogin no
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+AuthorizedKeysFile	/etc/ssh/authorized_keys/%u
+
+Compression yes
+Subsystem	sftp	internal-sftp -l info
+LogLevel VERBOSE
+
+X11Forwarding no
+AllowTcpForwarding no
+PermitTTY no
+Match group unrestricted
+  X11Forwarding yes
+  AllowTcpForwarding yes
+  PermitTTY yes
+
+Match user socks
+  AllowTcpForwarding yes
+
+# see https://wiki.archlinux.org/title/SFTP_chroot for setup
+Match group sftponly
+  ForceCommand internal-sftp -l info -d %d -u 002
+  ChrootDirectory /srv/sftp
