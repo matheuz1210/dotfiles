@@ -6,6 +6,8 @@ Wants=network-online.target
 [Service]
 ExecStart=/usr/bin/miniserve -vIp 19806 --header User-Agent:pacmancache/1.0 /var/cache/pacman/pkg
 
+CPUWeight=idle
+
 DynamicUser=yes
 PrivateTmp=yes
 PrivateUsers=yes
@@ -14,6 +16,8 @@ NoNewPrivileges=true
 LockPersonality=yes
 ProtectSystem=strict
 ProtectHome=yes
+ProtectHostname=yes
+MemoryDenyWriteExecute=yes
 ProtectClock=yes
 ProtectControlGroups=yes
 ProtectKernelLogs=yes
@@ -21,6 +25,7 @@ ProtectKernelModules=yes
 ProtectKernelTunables=yes
 ProtectProc=invisible
 CapabilityBoundingSet=
+SystemCallArchitectures=native
 SystemCallFilter=~ @reboot @swap @mount @privileged @module @raw-io @resources @debug @obsolete @cpu-emulation
 RestrictNamespaces=net
 RestrictRealtime=yes
