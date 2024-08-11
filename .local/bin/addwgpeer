@@ -36,4 +36,4 @@ Endpoint = $local_endpoint
 AllowedIPs = 0.0.0.0/0, ::/0
 EOF
 
-nmcli connection load $interface_file
+wg set $INTERFACE peer $peer_pubkey preshared-key <(<<<$psk) allowed-ips $allowed_ips
