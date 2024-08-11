@@ -1,0 +1,39 @@
+#!/bin/zsh -e
+peer_name=${1?} # this will be overwritten if the file edited again using other networkmanager tools
+allowed_ips=${2?} # example: 10.10.10.1/32,fd28::1/128
+local_endpoint=${3?}
+output_file=${4?}
+
+: ${INTERFACE:=wg0}
+if [[ "$(nmcli -g GENERAL.STATE connection show $INTERFACE)" != "activated" ]] nmcli connection up $INTERFACE
+
+interface_file=/etc/NetworkManager/system-connections/$INTERFACE.nmconnection
+interface_pubkey="$(wg show $INTERFACE public-key)"
+
+psk="$(wg genpsk)"
+
+: ${PEER_PRIVKEY:="$(wg genkey)"}
+peer_pubkey="$(wg pubkey <<<$PEER_PRIVKEY)"
+
+cat >> $interface_file <<EOF
+
+# $peer_name
+[wireguard-peer.$peer_pubkey]
+preshared-key=$psk
+preshared-key-flags=0
+allowed-ips=${allowed_ips:gs/,/;}
+EOF
+
+tee $output_file <<EOF
+[Interface]
+Address = $allowed_ips
+PrivateKey = $PEER_PRIVKEY
+
+[Peer]
+PublicKey = $interface_pubkey
+PresharedKey = $psk
+Endpoint = $local_endpoint
+AllowedIPs = 0.0.0.0/0, ::/0
+EOF
+
+nmcli connection load $interface_file
