@@ -1,0 +1,9 @@
+#!/bin/zsh
+source ~/.config/zsh/utils/color.zsh
+for pid ( $(pgrep "$@") ) {
+	echo $pid
+	printcolor yellow "$(tr '\0' ' ' </proc/$pid/cmdline)"
+	printcolor green "=> "
+	printcolor cyan "$(</proc/$pid/cgroup)"
+	echo
+}
