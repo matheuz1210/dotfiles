@@ -1,0 +1,14 @@
+#!/bin/zsh
+# wol: send wake on lan packet
+
+MAC=${1?}
+ADDR=${2:-255.255.255.255}
+PORT=${3:-9}
+
+#mac=${(j[\x]g::)${(s[:])MAC}}
+mac=""
+for byte ( ${(s[:])MAC} ) {
+	mac+="$(printf '\x'$byte)"
+}
+
+printf '\xff\xff\xff\xff\xff\xff'$mac$mac$mac$mac$mac$mac$mac$mac$mac$mac$mac$mac$mac$mac$mac$mac |ncat -v --udp --send-only $ADDR $PORT
