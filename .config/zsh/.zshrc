@@ -30,7 +30,7 @@ alias \
 	cp="cp -av" mv="mv -v" ln="ln -v" \
 	chmod="chmod -c" chown="chown -c" \
 	miniserve="miniserve -v" \
-	rsync="rsync -hhhHXPAa" \
+	rsync="rsync -hhhHaP" \
 	zst="zstdmt --rm --ultra -22 --long -v"
 
 alias \
