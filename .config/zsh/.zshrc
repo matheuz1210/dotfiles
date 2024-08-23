@@ -119,7 +119,17 @@ bindkey '^[z'            undo                  # Alt-z
 autoload -U edit-command-line
 zle -N edit-command-line
 bindkey '^[e'  edit-command-line              # Alt-e
-source ${PREFIX:-/usr}/share/fzf/key-bindings.zsh
+
+for file ( ${PREFIX:-/usr}{/share/fzf,/share/doc/fzf/examples}/key-bindings.zsh ) {
+	if [[ -f $file ]] {
+		source $file
+		__has_fzf=1
+		break
+	}
+}
+if (( ! __has_fzf )) {
+	printcolor red 'fzf not installed!\n'
+}
 
 # you need this for $terminfo to work for some reason
 if (( ${+terminfo[smkx]} )) && (( ${+terminfo[rmkx]} )) {
