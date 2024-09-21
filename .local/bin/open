@@ -1,0 +1,117 @@
+#!/usr/bin/env python
+# open: mount (optionallt encrypted) files
+import sys
+import getpass
+import sdbus
+
+service_name = "org.freedesktop.UDisks2"
+sdbus.set_default_bus(sdbus.sd_bus_open_system())
+
+Options = dict[str, tuple[str, any]]
+
+
+class Udisks2Manager(
+    sdbus.DbusInterfaceCommon, interface_name="org.freedesktop.UDisks2.Manager"
+):
+
+    @sdbus.dbus_method("ha{sv}", "o")
+    def loop_setup(self, fd: int, options: Options) -> str:
+        raise NotImplementedError
+
+
+class Block(sdbus.DbusInterfaceCommon, interface_name="org.freedesktop.UDisks2.Block"):
+
+    @sdbus.dbus_property("b")
+    def read_only(self) -> bool:
+        raise NotImplementedError
+
+    @sdbus.dbus_property("ay")
+    def device(self) -> bytes:
+        raise NotImplementedError
+
+    @sdbus.dbus_property("s")
+    def id_type(self) -> str:
+        raise NotImplementedError
+
+    @sdbus.dbus_property("s")
+    def id_usage(self) -> str:
+        raise NotImplementedError
+
+
+class Encrypted(
+    sdbus.DbusInterfaceCommon, interface_name="org.freedesktop.UDisks2.Encrypted"
+):
+
+    @sdbus.dbus_method("sa{sv}", "o")
+    def unlock(self, passphrase: str, options: Options) -> str:
+        raise NotImplementedError
+
+    @sdbus.dbus_method("a{sv}")
+    def lock(self, options: Options):
+        raise NotImplementedError
+
+
+class Filesystem(
+    sdbus.DbusInterfaceCommon, interface_name="org.freedesktop.UDisks2.Filesystem"
+):
+
+    @sdbus.dbus_property("t")
+    def size(self) -> int:
+        raise NotImplementedError
+
+    @sdbus.dbus_method("a{sv}", "s")
+    def mount(self, options: Options) -> str:
+        raise NotImplementedError
+
+    @sdbus.dbus_method("a{sv}")
+    def unmount(self, options: Options):
+        raise NotImplementedError
+
+
+class Loop(sdbus.DbusInterfaceCommon, interface_name="org.freedesktop.UDisks2.Loop"):
+    @sdbus.dbus_method("a{sv}")
+    def delete(self, options: Options):
+        raise NotImplementedError
+
+
+is_crypto = False
+manager = Udisks2Manager(service_name, object_path="/org/freedesktop/UDisks2/Manager")
+
+with open(sys.argv[1], "a+b") as fd:
+    loop_object_path = manager.loop_setup(fd.fileno(), {})
+
+block = Block(service_name, loop_object_path)
+print(f"Loop file: {block.device}")
+if block.id_usage == "crypto":
+    is_crypto = True
+    crypt = Encrypted(service_name, loop_object_path)
+    while True:
+        try:
+            crypt_object_path = crypt.unlock(getpass.getpass(), {})
+            break
+        except sdbus.SdBusUnmappedMessageError as e:
+            print(f"Failed to unlock device! {e}")
+            pass
+
+    object_path = crypt_object_path
+else:
+    object_path = loop_object_path
+
+fs = Filesystem(service_name, object_path)
+mount_path = fs.mount({})
+print(f"Mounted at {mount_path}.")
+
+input("Enter to dismount.")
+
+print(f"Trying to unmount {mount_path}...", end="")
+while True:
+    try:
+        fs.unmount({})
+        break
+    except:
+        pass
+print("Unmounted.")
+if is_crypto:
+    crypt.lock({})
+
+Loop(service_name, loop_object_path).delete({})
