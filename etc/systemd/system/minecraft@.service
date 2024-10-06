@@ -1,0 +1,34 @@
+[Unit]
+Description=Minecraft Server %i
+After=network.target
+
+[Service]
+ReadWritePaths=/srv/minecraft/
+WorkingDirectory=/srv/minecraft/%i
+User=minecraft
+Group=minecraft
+ExecStart=/usr/lib/jvm/java-21-openjdk/bin/java -Xmx4096M -XX:+UseZGC -XX:+ZGenerational -jar server.jar --nogui
+
+CPUWeight=idle
+IOSchedulingClass=idle
+
+CapabilityBoundingSet=
+ProtectClock=yes
+ProtectControlGroups=yes
+ProtectHostname=yes
+ProtectKernelLogs=yes
+ProtectKernelModules=yes
+ProtectKernelTunables=yes
+PrivateDevices=yes
+PrivateTmp=yes
+PrivateUsers=yes
+ProtectHome=yes
+ProtectProc=invisible
+ProtectSystem=strict
+NoNewPrivileges=yes
+RestrictRealtime=yes
+SystemCallArchitectures=native
+SystemCallFilter=~ @reboot @swap @mount @privileged @module @raw-io @resources @debug @obsolete @cpu-emulation
+
+[Install]
+WantedBy=multi-user.target
