@@ -17,4 +17,5 @@ export \
 	WINEPREFIX=~/.local/wine \
 	LESSHISTFILE=- \
 	EDITOR=nano PAGER="bat -p" MANGOHUD=1 \
-	RADV_FORCE_VRS=2x2 RADV_DEBUG=novrsflatshading
+	RADV_FORCE_VRS=2x2 RADV_DEBUG=novrsflatshading \
+	TIME_STYLE=long-iso
