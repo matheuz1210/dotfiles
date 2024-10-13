@@ -103,7 +103,7 @@ setopt globdots
 autoload -Uz compinit
 zstyle ':completion:*' menu select
 zstyle ':completion:*:*:*:*:processes' command "ps -eo pid,user,comm"
-zstyle ':completion:*' matcher-list 'm:{[:lower:][:upper:]}={[:upper:][:lower:]}' # case-insensitive
+zstyle ':completion:*' matcher-list 'm:{[:lower:][:upper:]}={[:upper:][:lower:]}' 'l:|=* r:|=*' # case-insensitive, match from anywhere
 compinit -d $XDG_CACHE_HOME/zcompdump
 compdef _pacman pac=pacman
 
