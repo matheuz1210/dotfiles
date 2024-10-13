@@ -13,6 +13,7 @@ SAVEHIST=100000
 
 nohist() {
 	HISTFILE=/dev/null
+	unfunction __zoxide_hook
 }
 
 ## Aliases
