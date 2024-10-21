@@ -1,0 +1,38 @@
+#!/usr/bin/env zsh
+set -e
+
+get_info() {
+	reply=( ${(f)"$(python -c '
+import yt_dlp, json, sys
+
+downloader = yt_dlp.YoutubeDL({"quiet": True, "cookiefile": "./cookies.txt"})
+twt = yt_dlp.extractor.twitter.TwitterIE(downloader)
+
+status = twt._extract_status(sys.argv[1])
+print(status["user"]["screen_name"])
+for media in status["entities"]["media"]:
+	if media["type"] != "photo":
+		continue
+	print(media["media_url_https"])
+	' $1)"}
+	)
+	user=$reply[1]
+	urls=( $reply[2,-1] )
+}
+
+for url ( $@ ) {
+	twid="$(cut -d/ -f6 <<<$url)"
+
+	get_info $twid
+	files=()
+	for i ( {1..$#urls} ) {
+		file="@$user-$twid-$i"
+		typeset -p urls
+		aria2c "$urls[$i]" -o $file
+		files+=$file
+	}
+	jxlify $files
+	exiftool -artist=$user -baseurl=$url -overwrite_original $^files.jxl
+}
+
+
