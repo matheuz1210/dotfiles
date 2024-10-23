@@ -143,7 +143,7 @@ if (( ${+terminfo[smkx]} )) && (( ${+terminfo[rmkx]} )) {
 
 WORDCHARS=${WORDCHARS/\/}
 ## Syntax Highlighting
-ZSH_HIGHLIGHT_HIGHLIGHTERS=(main cursor)
+ZSH_HIGHLIGHT_HIGHLIGHTERS=(main cursor brackets)
 
 typeset -gA ZSH_HIGHLIGHT_STYLES
 ZSH_HIGHLIGHT_STYLES[path_pathseparator]='fg=red,bold'
