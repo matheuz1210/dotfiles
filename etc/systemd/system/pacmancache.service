@@ -7,6 +7,8 @@ Wants=network-online.target
 ExecStart=/usr/bin/miniserve -vIp 19806 --header User-Agent:pacmancache/1.0 /var/cache/pacman/pkg
 
 CPUWeight=idle
+IOSchedulingClass=idle
+TimeoutStopSec=5s
 
 DynamicUser=yes
 PrivateTmp=yes
