@@ -26,5 +26,6 @@ yt-dlp \
 	-N "$(nproc)" \
 	--add-metadata --embed-chapters \
 	--embed-subs --sub-langs all,-live_chat \
+	-S vcodec:av01 \
 	-io '%(title)s.%(ext)s' $opts "$@"
 #--downloader 'aria2c' --downloader-args '-c -j 3 -x 3 -s 3 -k 1M'
