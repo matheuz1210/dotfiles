@@ -8,12 +8,16 @@ if [[ $WAYLAND_DISPLAY[1] != '/' ]] {
 	WAYLAND_DISPLAY=$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY
 }
 : ${PULSE_SERVER:=$XDG_RUNTIME_DIR/pulse/native}
+: ${PIPEWIRE_REMOTE:=$XDG_RUNTIME_DIR/pipewire-0}
 
 setfacl -m u:${newuser}:x   -- ${WAYLAND_DISPLAY:h}
 setfacl -m u:${newuser}:rwx -- $WAYLAND_DISPLAY
 setfacl -m u:${newuser}:rwx -- $WAYLAND_DISPLAY.lock
 
 setfacl -m u:${newuser}:x   -- ${PULSE_SERVER:h}
-setfacl -m u:${newuser}:x   -- $PULSE_SERVER
+setfacl -m u:${newuser}:rwx -- $PULSE_SERVER
 
-exec su $newuser -c "env WAYLAND_DISPLAY=${(q)WAYLAND_DISPLAY} PULSE_SERVER=${(q)PULSE_SERVER} "${(j[ ])${(q)@}}
+setfacl -m u:${newuser}:rwx -- $PIPEWIRE_REMOTE
+setfacl -m u:${newuser}:rwx -- $PIPEWIRE_REMOTE.lock
+
+exec su $newuser -c "env WAYLAND_DISPLAY=${(q)WAYLAND_DISPLAY} PULSE_SERVER=${(q)PULSE_SERVER} PIPEWIRE_REMOTE=${(q)PIPEWIRE_REMOTE} "${(j[ ])${(q)@}}
