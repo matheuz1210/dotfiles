@@ -1,0 +1,3 @@
+# Steam Local Network Game Transfers: https://help.steampowered.com/en/faqs/view/46BD-6BA8-B012-CE43
+add rule inet main lan tcp dport 27040 accept
+add rule inet main lan udp dport 27031-27036 accept
