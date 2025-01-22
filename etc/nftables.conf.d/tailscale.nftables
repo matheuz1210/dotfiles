@@ -1,0 +1,2 @@
+#!/bin/nft -f
+add element inet main LANv4 { 100.64.0.0/10 }
