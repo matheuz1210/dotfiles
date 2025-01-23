@@ -23,7 +23,8 @@ alias \
 	cls=clear \
 	_="doas " \
 	fmp="ffmpeg -hide_banner" fpl="ffplay -hide_banner" fpr="ffprobe -hide_banner" \
-	d="dirs -v" -="cd -" history="builtin fc -l 1"
+	d="dirs -v" -="cd -" history="builtin fc -l 1" \
+	idle='systemd-run --user --scope -p CPUWeight=idle '
 
 alias \
 	rm="rm -Iv" \
