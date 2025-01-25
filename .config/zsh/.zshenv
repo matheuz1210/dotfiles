@@ -18,4 +18,5 @@ export \
 	LESSHISTFILE=- \
 	EDITOR=nano PAGER="bat -p" MANGOHUD=1 \
 	RADV_FORCE_VRS=2x2 RADV_DEBUG=novrsflatshading \
-	TIME_STYLE=long-iso
+	TIME_STYLE=long-iso \
+	QT_WAYLAND_RECONNECT=1
